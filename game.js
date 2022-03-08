@@ -1,5 +1,9 @@
 const gamezone = document.querySelector(".gamezone");
 const hangar = document.querySelector(".hangar");
+const hp = document.querySelector(".hpnumber");
+const points = document.querySelector(".pointsnumber");
+const header = document.querySelector(".header");
+
 let k = 0;
 let fps = 1000 / 60;
 let direction;
@@ -16,10 +20,12 @@ function init() {
   div.style.left = `${player.x}px`;
   div.style.top = `${player.y}px`;
   div.style.backgroundImage = player.top;
-  div.style.height = "77px";
-  div.style.width = "77px";
+  div.style.height = `${player.height}px`;
+  div.style.width = `${player.width}px`;
   gamezone.append(div);
   player.el = document.querySelector(".gamer");
+  points.textContent = `${player.points}`;
+  hp.textContent = `${player.hp}`
 }
 function controllers() {
   document.addEventListener("keydown", (e) => {
@@ -218,6 +224,7 @@ let player = {
   run: false,
   side: 0, //1-top, 2-right, 3- bottom, 4-left  0 это положение в котором игра стоит
   fire: true,
+  points:0,
 };
 
 const btr = {
@@ -254,4 +261,36 @@ const choose = (obj) => {
     player.bulletheight = obj.bulletheight;
     game();
   }
+};
+
+const amx = {
+  speed: 15,
+  hp: 700,
+  damage: 300,
+  top: "url(amx-top.png)",
+  left: "url(amx-left.png)",
+  rigth: "url(amx-right.png)",
+  bottom: "url(amx-bottom.png)",
+  width: 77,
+  height: 77,
+  bulletspeed: 30,
+  bullettime: 800,
+  bulletwidth: 12,
+  bulletheight: 12,
+};
+
+const kv2 = {
+  speed: 5,
+  hp: 1300,
+  damage: 800,
+  top: "url(kv2-top.png)",
+  left: "url(kv2-left.png)",
+  rigth: "url(kv2-right.png)",
+  bottom: "url(kv2-bottom.png)",
+  width: 150,
+  height: 150,
+  bulletspeed: 10,
+  bullettime: 1600,
+  bulletwidth: 20,
+  bulletheight: 20,
 };
