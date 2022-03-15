@@ -38,37 +38,46 @@ function controllers() {
         player.el.style.backgroundImage = player.top;
         player.side = 1;
         direction = "top";
+        player.el.style.height = `${player.height}px`;
+        player.el.style.width = `${player.width}px`;
         break;
       case 'KeyD': //right
         player.run = true;
         player.el.style.backgroundImage = player.rigth;
         player.side = 2;
         direction = "right";
+        player.el.style.width = `${player.height}px`;
+        player.el.style.height = `${player.width}px`;
         break;
       case 'KeyS': //bottom
         player.run = true;
         player.el.style.backgroundImage = player.bottom;
         player.side = 3;
         direction = "bottom";
+        player.el.style.height = `${player.height}px`;
+        player.el.style.width = `${player.width}px`;
         break;
       case 'KeyA': //left
         player.run = true;
         player.el.style.backgroundImage = player.left;
         player.side = 4;
         direction = "left";
+        player.el.style.width = `${player.height}px`;
+        player.el.style.height = `${player.width}px`;
         break;
       case 'ShiftLeft':
         if (player.side === 1) {
           addbullet(player.width / 2, 0);
         } else if (player.side === 2) {
-          addbullet(player.width, player.height / 2);
+          addbullet(player.height, player.width / 2);
         } else if (player.side === 3) {
           addbullet(player.width / 2, player.height);
         } else if (player.side === 4) {
-          addbullet(0, player.height / 2);
+          addbullet(0, player.width / 2);
         }
         break;
     }
+
   });
 
   document.addEventListener("keyup", (e) => {
@@ -225,7 +234,7 @@ const choose = (obj) => {
 };
 
 class tank{
-  constructor(speed, hp, damage, image,size,bulletspeed, bullettime, bulletsize){
+  constructor(speed, hp, damage, image,width,height,bulletspeed, bullettime, bulletsize){
     this.speed = speed;
     this.hp = hp;
     this.damage = damage;
@@ -233,8 +242,8 @@ class tank{
     this.left = `url(sprites/${image}-left.png)`;
     this.rigth = `url(sprites/${image}-right.png)`;
     this.bottom = `url(sprites/${image}-bottom.png)`;
-   this.width = size;
-   this.height = size;
+   this.width = width;
+   this.height = height;
    this.bulletspeed = bulletspeed;
    this.bullettime = bullettime;
    this.bulletwidth = bulletsize;
@@ -243,7 +252,8 @@ class tank{
   }
 }
 
-let kv2 = new tank(5,1300,800, "kv2",150,10,1600,20);
-let amx = new tank(15,700,300,"amx",77,30,800,12);
-let btr = new tank (20,500,100,"btr",77,20,100,8);
-let m4 = new tank(10,1000,400,"m4",77,5,2000,16);
+let kv2 = new tank(5,1300,800, "kv2",150,150,10,1600,20);
+let amx = new tank(15,700,300,"amx",77,77,30,800,12);
+let btr = new tank (20,500,100,"btr",77,77,20,100,8);
+let m4 = new tank(10,1000,400,"m4",77,77,5,2000,16);
+let wafen = new tank(20,2000,1000,"wafen",150,200,30,500,20);
