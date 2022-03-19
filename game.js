@@ -239,8 +239,8 @@ function game() {
 
 let player = {
   el: null,
-  x: 320,
-  y: 300,
+  x: gamezone.getBoundingClientRect().width/2,
+  y: gamezone.getBoundingClientRect().height/2,
   run: false,
   side: 0, //1-top, 2-right, 3- bottom, 4-left  0 это положение в котором игра стоит
   fire: true,
@@ -279,6 +279,57 @@ class SmallTank extends BigTank {
     this.height = collection.get('size');
   }
 }
+
+class enemy extends SmallTank {
+  constructor(collection = new Map()) {
+    super(collection);
+    this.name = collection.get('name');
+    this.points = collection.get('points');
+    this.x = collection.get('x');
+    this.y = collection.get('y');
+    this.side = collection.get('side');
+  }
+
+  find(){
+    this.el = document.querySelector(`.${this.name}`);
+  }
+
+  back(){
+   if(this.side === 1){
+     this.el.style.backgroundImage = this.top;
+   }else if(this.side === 2){
+    this.el.style.backgroundImage = this.rigth;
+   }else if(this.side === 3){
+    this.el.style.backgroundImage = this.bottom;
+   }else if(this.side === 4){
+    this.el.style.backgroundImage = this.left;
+   }  
+  }
+
+  spawn(){
+    let div = document.createElement("div");
+    div.className = `${this.name}`;
+    div.style.display = "block";
+    if(this.name ==='enemy2'){
+    this.x -= this.width;
+    }else if(this.name === 'enemy3'){
+      this.x -= this.width;
+      this.y -= this.height;
+    }else if(this.name === 'enemy4'){
+      this.y -= this.height;
+    }
+    div.style.left = `${this.x}px`;
+    div.style.top = `${this.y}px`;
+    div.style.height = `${this.height}px`;
+    div.style.width = `${this.width}px`;
+    div.classList.add('enemy');
+    gamezone.append(div);
+    this.find();
+    this.back();
+
+  }
+}
+
 
 const M4_INFO_ARRAY = [
   ['speed', 10],
@@ -343,7 +394,92 @@ const WAFEN_INFO = new Map(WAFEN_INFO_ARRAY);
 
 let m4 = new SmallTank(M4_INFO);
 let amx = new SmallTank(AMX_INFO);
-let kv2 = new SmallTank(KV2_INFO);
+let kv2 = new SmallTank(KV2_INFO);     //player tanks
 let btr = new SmallTank(BTR_INFO);
 let wafen = new BigTank(WAFEN_INFO)
 
+const ENEMY1_INFO_ARRAY = [
+  ['speed', 10],
+  ['hp', 1000],
+  ['damage', 400],
+  ['image', 'enemy'],
+  ['size', 77],
+  ['bulletspeed', 5],
+  ['bullettime', 2000],
+  ['bulletsize', 16],
+  ['points',100],
+  ['name','enemy1'],
+  ['x',0],
+  ['y',0],
+  ['side',2]
+];
+
+let ENEMY1_INFO = new Map(ENEMY1_INFO_ARRAY);
+
+const ENEMY2_INFO_ARRAY = [
+  ['speed', 10],
+  ['hp', 1000],
+  ['damage', 400],
+  ['image', 'enemy'],
+  ['size', 77],
+  ['bulletspeed', 5],
+  ['bullettime', 2000],
+  ['bulletsize', 16],
+  ['points',100],
+  ['name','enemy2'],
+  ['x',hangar.getBoundingClientRect().left-leftpanel.getBoundingClientRect().width],
+  ['y',0],
+  ['side',3]
+];
+let ENEMY2_INFO = new Map(ENEMY2_INFO_ARRAY);
+
+const ENEMY3_INFO_ARRAY = [
+  ['speed', 10],
+  ['hp', 1000],
+  ['damage', 400],
+  ['image', 'enemy'],
+  ['size', 77],
+  ['bulletspeed', 5],
+  ['bullettime', 2000],
+  ['bulletsize', 16],
+  ['points',100],
+  ['name','enemy3'],
+  ['x',hangar.getBoundingClientRect().left-leftpanel.getBoundingClientRect().width],
+  ['y',gamezone.getBoundingClientRect().height],
+  ['side',4]
+];
+let ENEMY3_INFO = new Map(ENEMY3_INFO_ARRAY);
+
+
+const ENEMY4_INFO_ARRAY = [
+  ['speed', 10],
+  ['hp', 1000],
+  ['damage', 400],
+  ['image', 'enemy'],
+  ['size', 77],
+  ['bulletspeed', 5],
+  ['bullettime', 2000],
+  ['bulletsize', 16],
+  ['points',100],
+  ['name','enemy4'],
+  ['x',0],
+  ['y',gamezone.getBoundingClientRect().height],
+  ['side',1]
+];
+let ENEMY4_INFO = new Map(ENEMY4_INFO_ARRAY);
+
+
+
+let enemy1 = new enemy(ENEMY1_INFO);
+let enemy2 = new enemy(ENEMY2_INFO);
+let enemy3 = new enemy(ENEMY3_INFO);
+let enemy4 = new enemy(ENEMY4_INFO);
+
+
+
+console.log(enemy1);
+enemy1.spawn();
+enemy2.spawn();
+enemy3.spawn();
+enemy4.spawn();
+console.log(enemy1);
