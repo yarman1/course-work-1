@@ -234,6 +234,7 @@ function game() {
   init();
   controllers();
   intervalls();
+  spawnenemies();
   k++;
 }
 
@@ -476,10 +477,10 @@ let enemy3 = new enemy(ENEMY3_INFO);
 let enemy4 = new enemy(ENEMY4_INFO);
 
 
-
-console.log(enemy1);
+function spawnenemies(){
 enemy1.spawn();
 enemy2.spawn();
 enemy3.spawn();
 enemy4.spawn();
-console.log(enemy1);
+}
+
