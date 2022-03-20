@@ -15,6 +15,8 @@ for (let i = 0; i < FIELD_SIZE.height; i++) {
 }
 console.dir(field);
 
+const FIGURES_NAMES = ['J', 'L', 'I', 'O', 'Z', 'S', 'T'];
+
 const FIGURES = {
   J: [
       [0, 1, 0],
@@ -63,3 +65,18 @@ const FIGURES_COLORS = {
   S: '#39eb1a',
   T: '#e01aeb',
 };
+
+const randomInt = max => Math.floor(Math.random() * max);
+
+const randomSequence = names => {
+  const res = [];
+  let randValue, name;
+  while (names.length) {
+    randValue = randomInt(names.length - 1);
+    res.push(names[randValue]);
+    names.splice(randValue, 1);
+  }
+  return res;
+};
+
+console.log(randomSequence(FIGURES_NAMES));
