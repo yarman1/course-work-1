@@ -70,7 +70,7 @@ const randomInt = max => Math.floor(Math.random() * max);
 
 const randomSequence = names => {
   const res = [];
-  let randValue, name;
+  let randValue;
   while (names.length) {
     randValue = randomInt(names.length - 1);
     res.push(names[randValue]);
@@ -80,3 +80,9 @@ const randomSequence = names => {
 };
 
 console.log(randomSequence(FIGURES_NAMES));
+
+/*ctx.strokeStyle = 'white';
+ctx.lineWidth = 10;
+
+
+ctx.strokeRect(240, 50, 320, 640);  */
