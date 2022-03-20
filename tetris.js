@@ -53,3 +53,13 @@ const FIGURES = {
       [1, 1, 1],
     ],  
 };
+
+const FIGURES_COLORS = {
+  J: '#1717eb',
+  L: '#ebb538',
+  I: '#34ebd5',
+  O: '#f5ef4c',
+  Z: '#e32222',
+  S: '#39eb1a',
+  T: '#e01aeb',
+};
