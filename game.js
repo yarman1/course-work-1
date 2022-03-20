@@ -215,6 +215,12 @@ function intervalls() {
       }
     });
   }, fps);
+
+  ints.enemmove = setInterval(() => {
+    moveenemies();
+}, fps);
+
+
 }
 
 function addbullet(x, y) {
@@ -328,6 +334,50 @@ class enemy extends SmallTank {
     this.find();
     this.back();
 
+  }
+
+  move(){
+    if(this.side === 1){
+      if(this.y>0){
+        this.y -= this.speed;
+        this.el.style.top = `${this.y}px`;
+      }else{
+        this.side = 2;
+        this.el.style.backgroundImage = this.rigth;
+        return 0;
+      }
+
+    }else if(this.side === 2){
+      if(this.x < gamezone.getBoundingClientRect().width - this.width){
+        this.x += this.speed;
+        this.el.style.left = `${this.x}px`;
+      }else{
+        this.side = 3;
+        this.el.style.backgroundImage = this.bottom;
+        return 0;
+      }
+
+    }else if(this.side === 3){
+      if(this.y < gamezone.getBoundingClientRect().height- this.height){
+        this.y += this.speed;
+        this.el.style.top = `${this.y}px`;
+      }else{
+        this.side = 4;
+        this.el.style.backgroundImage = this.left;
+        return 0;
+      }
+
+    }else if(this.side === 4){
+      if(this.x > 0){
+        this.x -= this.speed;
+        this.el.style.left = `${this.x}px`;
+      }else{
+        this.side = 1;
+        this.el.style.backgroundImage = this.top;
+        return 0;
+      }
+
+    }
   }
 }
 
@@ -484,3 +534,9 @@ enemy3.spawn();
 enemy4.spawn();
 }
 
+function moveenemies(){
+  enemy1.move();
+  enemy2.move();
+  enemy3.move();
+  enemy4.move();
+}
