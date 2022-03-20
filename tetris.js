@@ -6,6 +6,11 @@ const FIELD_SIZE = {
   height: 22,
   width: 10,
 }
+const START_CHARS = {
+  startCol: 3,
+  startRow: 0,
+  startRowI: 1,
+}
 
 for (let i = 0; i < FIELD_SIZE.height; i++) {
   field[i] = [];
@@ -13,7 +18,6 @@ for (let i = 0; i < FIELD_SIZE.height; i++) {
     field[i][j] = 0;
   }
 }
-console.dir(field);
 
 const FIGURES_NAMES = ['J', 'L', 'I', 'O', 'Z', 'S', 'T'];
 
@@ -68,7 +72,9 @@ const FIGURES_COLORS = {
 
 const randomInt = max => Math.floor(Math.random() * max);
 
-const randomSequence = names => {
+const randomSequence = namesConst => {
+  const names = [];
+  namesConst.forEach(el => names.push(el));
   const res = [];
   let randValue;
   while (names.length) {
@@ -80,6 +86,17 @@ const randomSequence = names => {
 };
 
 console.log(randomSequence(FIGURES_NAMES));
+
+const nextFigure = sequence => {
+  const name = sequence.shift();
+  const matrix = FIGURES[name];
+  const col = START_CHARS.startCol;
+  const row = name === 'I' ? 
+    START_CHARS.startRowI :
+    START_CHARS.startRow;
+  return {name: name, matrix: matrix, col: col, row: row};
+};
+console.log(nextFigure(randomSequence(FIGURES_NAMES)));
 
 /*ctx.strokeStyle = 'white';
 ctx.lineWidth = 10;
