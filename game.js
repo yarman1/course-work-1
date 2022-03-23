@@ -220,6 +220,11 @@ function intervalls() {
     moveenemies();
 }, fps);
 
+ints.points = setInterval(() => {
+  points.textContent = `${player.points}`;
+  hp.textContent = `${player.hp}`;
+}, fps);
+
 
 }
 
@@ -276,6 +281,10 @@ class BigTank{
       game();
       console.log(player);
     }
+  }
+  diy(){
+    this.el.parentNode.removeChild(this.el);
+
   }
 }
 
@@ -346,6 +355,10 @@ class enemy extends SmallTank {
           }else if(this.x >player.x+player.width){
             this.side = 4;
             this.el.style.backgroundImage = this.left;
+          }else{
+            const playerHealth = player.hp;
+            player.hp -=this.hp;
+            this.hp-=playerHealth;
           }
         }else{
           this.y -= this.speed;
@@ -366,6 +379,10 @@ class enemy extends SmallTank {
           }else if(this.y+this.height<player.y){
             this.side = 3;
             this.el.style.backgroundImage = this.bottom;
+          }else{
+            const playerHealth = player.hp;
+            player.hp -=this.hp;
+            this.hp-=playerHealth;
           }
         }else{
           this.x += this.speed;
@@ -386,6 +403,10 @@ class enemy extends SmallTank {
           }else if(this.x >player.x+player.width){
             this.side = 4;
             this.el.style.backgroundImage = this.left;
+          }else{
+            const playerHealth = player.hp;
+            player.hp -=this.hp;
+            this.hp-=playerHealth;
           }
         }
        else{
@@ -408,6 +429,10 @@ class enemy extends SmallTank {
           }else if(this.y+this.height<player.y){
             this.side = 3;
             this.el.style.backgroundImage = this.bottom;
+          }else{
+            const playerHealth = player.hp;
+            player.hp -=this.hp;
+            this.hp-=playerHealth;
           }
         }
         else{
@@ -583,4 +608,8 @@ function moveenemies(){
   enemy2.move();
   enemy3.move();
   enemy4.move();
+
+  setTimeout(() => {
+    enemy1.diy();//заебенил пока в класс функцию удаления танка(надо будет как-то прервать функцию интерваллс для данного танка после того как танк исчезнет для данного танка ибо там сеттаймаут накидывает по 60 ошибок в секунду
+  }, 2000);
 }
