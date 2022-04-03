@@ -98,6 +98,10 @@ const nextFigure = sequence => {
 };
 console.log(nextFigure(randomSequence(FIGURES_NAMES)));
 
+const rotateFigure = (matrix) => {
+  
+};
+
 /*ctx.strokeStyle = 'white';
 ctx.lineWidth = 10;
 
