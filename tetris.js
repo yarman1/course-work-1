@@ -1,5 +1,5 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+// const canvas = document.getElementById('canvas');
+// const ctx = canvas.getContext('2d');
 
 const field = [];
 const FIELD_SIZE = {
@@ -85,7 +85,7 @@ const randomSequence = namesConst => {
   return res;
 };
 
-console.log(randomSequence(FIGURES_NAMES));
+//console.log(randomSequence(FIGURES_NAMES));
 
 const nextFigure = sequence => {
   const name = sequence.shift();
@@ -96,11 +96,30 @@ const nextFigure = sequence => {
     START_CHARS.startRow;
   return {name: name, matrix: matrix, col: col, row: row};
 };
-console.log(nextFigure(randomSequence(FIGURES_NAMES)));
+//console.log(nextFigure(randomSequence(FIGURES_NAMES)));
 
 const rotateFigure = (matrix) => {
-  
+  const matrixSide = matrix[0].length;
+  const iterationNum = Math.floor(matrixSide / 2);
+  let temp = 0;
+  for (let i = 0; i < iterationNum; i++) {
+    for (let j = i; j < matrixSide - 1 - i; j++) {
+      temp = matrix[i][matrixSide - 1 - j];
+      matrix[i][matrixSide - 1 - j] = matrix[j][i];
+      matrix[j][i] = matrix[matrixSide - 1 - i][j];
+      matrix[matrixSide - 1 - i][j] = matrix[matrixSide - 1 - j][matrixSide - 1 - i];
+      matrix[matrixSide - 1 - j][matrixSide - 1 - i] = temp;
+    }
+  }
+  return matrix;
 };
+
+
+console.table(FIGURES.I);
+
+const rotated = rotateFigure(FIGURES.I);
+
+console.table(rotated);
 
 /*ctx.strokeStyle = 'white';
 ctx.lineWidth = 10;
