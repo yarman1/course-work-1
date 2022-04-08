@@ -7,8 +7,9 @@ const footer = document.querySelector(".footer");
 const leftpanel = document.querySelector(".leftPanel");
 
 let k = 0;
-let fps = 1000 / 60;
 let direction;
+const fps = 1000 / 60;
+
 
 let ints = {
   run: false,
@@ -115,116 +116,119 @@ function controllers() {
     }
   });
 }
+function SetInt(func){
+setInterval(() => {
+  func();
+}, fps);
+}
 
-function intervalls() {
-  ints.run = setInterval(() => {
-    if (player.run) {
-      switch (player.side) {
-        case 1: //top
-          if (player.y > 0) {
-            player.y -= player.speed;
-            player.el.style.top = `${player.y}px`;
-          }
+function run(){
+  if (player.run) {
+    switch (player.side) {
+      case 1: //top
+        if (player.y > 0) {
+          player.y -= player.speed;
+          player.el.style.top = `${player.y}px`;
+        }
 
-          break;
-        case 2: //right
-          if (
-            player.x <
-            hangar.getBoundingClientRect().left -
-              player.width -
-              leftpanel.getBoundingClientRect().width
-          ) {
-            player.x += player.speed;
-            player.el.style.left = `${player.x}px`;
-          }
+        break;
+      case 2: //right
+        if (
+          player.x <
+          hangar.getBoundingClientRect().left -
+            player.width -
+            leftpanel.getBoundingClientRect().width
+        ) {
+          player.x += player.speed;
+          player.el.style.left = `${player.x}px`;
+        }
 
-          break;
-        case 3: //bottom
-          if (
-            player.y <
-            footer.getBoundingClientRect().top -
-              player.height -
-              header.getBoundingClientRect().height
-          ) {
-            player.y += player.speed;
-            player.el.style.top = `${player.y}px`;
-          }
+        break;
+      case 3: //bottom
+        if (
+          player.y <
+          footer.getBoundingClientRect().top -
+            player.height -
+            header.getBoundingClientRect().height
+        ) {
+          player.y += player.speed;
+          player.el.style.top = `${player.y}px`;
+        }
 
-          break;
-        case 4: //left
-          if (player.x > 0) {
-            player.x -= player.speed;
-            player.el.style.left = `${player.x}px`;
-          }
-          break;
+        break;
+      case 4: //left
+        if (player.x > 0) {
+          player.x -= player.speed;
+          player.el.style.left = `${player.x}px`;
+        }
+        break;
+    }
+  }
+}
+function playerbullets(){
+  let bullets = document.querySelectorAll(".bullet");
+  bullets.forEach((bullet) => {
+    let direction = bullet.getAttribute("direction");
+    if (direction === "top") {
+      if (
+        bullet.getBoundingClientRect().top >
+        gamezone.getBoundingClientRect().top + player.bulletsize
+      ) {
+        bullet.style.top = `${
+          parseInt(bullet.style.top.replace("px", ""), 10) -
+          player.bulletspeed
+        }px`;
+      } else {
+        bullet.parentNode.removeChild(bullet);
+      }
+    } else if (direction === "bottom") {
+      if (
+        bullet.getBoundingClientRect().bottom <=
+        footer.getBoundingClientRect().top + player.bulletsize
+      ) {
+        bullet.style.top = `${
+          parseInt(bullet.style.top.replace("px", ""), 10) +
+          player.bulletspeed
+        }px`;
+      } else {
+        bullet.parentNode.removeChild(bullet);
+      }
+    } else if (direction === "left") {
+      if (
+        bullet.getBoundingClientRect().left >
+        gamezone.getBoundingClientRect().left + player.bulletsize
+      ) {
+        bullet.style.left = `${
+          parseInt(bullet.style.left.replace("px", ""), 10) -
+          player.bulletspeed
+        }px`;
+      } else {
+        bullet.parentNode.removeChild(bullet);
+      }
+    } else if (direction === "right") {
+      if (
+        bullet.getBoundingClientRect().left <=
+        hangar.getBoundingClientRect().left - player.bulletsize
+      ) {
+        bullet.style.left = `${
+          parseInt(bullet.style.left.replace("px", ""), 10) +
+          player.bulletspeed
+        }px`;
+      } else {
+        bullet.parentNode.removeChild(bullet);
       }
     }
-  }, fps);
-  ints.bullet = setInterval(() => {
-    let bullets = document.querySelectorAll(".bullet");
-    bullets.forEach((bullet) => {
-      let direction = bullet.getAttribute("direction");
-      if (direction === "top") {
-        if (
-          bullet.getBoundingClientRect().top >
-          gamezone.getBoundingClientRect().top + player.bulletsize
-        ) {
-          bullet.style.top = `${
-            parseInt(bullet.style.top.replace("px", ""), 10) -
-            player.bulletspeed
-          }px`;
-        } else {
-          bullet.parentNode.removeChild(bullet);
-        }
-      } else if (direction === "bottom") {
-        if (
-          bullet.getBoundingClientRect().bottom <=
-          footer.getBoundingClientRect().top + player.bulletsize
-        ) {
-          bullet.style.top = `${
-            parseInt(bullet.style.top.replace("px", ""), 10) +
-            player.bulletspeed
-          }px`;
-        } else {
-          bullet.parentNode.removeChild(bullet);
-        }
-      } else if (direction === "left") {
-        if (
-          bullet.getBoundingClientRect().left >
-          gamezone.getBoundingClientRect().left + player.bulletsize
-        ) {
-          bullet.style.left = `${
-            parseInt(bullet.style.left.replace("px", ""), 10) -
-            player.bulletspeed
-          }px`;
-        } else {
-          bullet.parentNode.removeChild(bullet);
-        }
-      } else if (direction === "right") {
-        if (
-          bullet.getBoundingClientRect().left <=
-          hangar.getBoundingClientRect().left - player.bulletsize
-        ) {
-          bullet.style.left = `${
-            parseInt(bullet.style.left.replace("px", ""), 10) +
-            player.bulletspeed
-          }px`;
-        } else {
-          bullet.parentNode.removeChild(bullet);
-        }
-      }
-    });
-  }, fps);
+  });
+}
 
-  ints.enemmove = setInterval(() => {
-    moveenemies();
-}, fps);
-
-ints.points = setInterval(() => {
+function ShowPoints(){
   points.textContent = `${player.points}`;
   hp.textContent = `${player.hp}`;
-}, fps);
-
+}
+function intervalls() {
+  ints.run = SetInt(run);
+  ints.bullet = SetInt(playerbullets);
+  ints.enemmove = SetInt(moveenemies);
 
 }
 
@@ -569,7 +573,6 @@ const ENEMY3_INFO_ARRAY = [
   ['side',4]
 ];
 let ENEMY3_INFO = new Map(ENEMY3_INFO_ARRAY);
-
 
 const ENEMY4_INFO_ARRAY = [
   ['speed', 10],
