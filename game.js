@@ -282,7 +282,7 @@ class BigTank{
       console.log(player);
     }
   }
-  diy(){
+  die(){
     this.el.parentNode.removeChild(this.el);
 
   }
@@ -595,21 +595,19 @@ let enemy2 = new enemy(ENEMY2_INFO);
 let enemy3 = new enemy(ENEMY3_INFO);
 let enemy4 = new enemy(ENEMY4_INFO);
 
+const enemies = [enemy1,enemy2,enemy3,enemy4];
 
 function spawnenemies(){
-enemy1.spawn();
-enemy2.spawn();
-enemy3.spawn();
-enemy4.spawn();
+  for(const enemy of enemies){
+    enemy.spawn();
+  }
 }
 
 function moveenemies(){
-  enemy1.move();
-  enemy2.move();
-  enemy3.move();
-  enemy4.move();
-
+  for(const enemy of enemies){
+    enemy.move();
+  }
   setTimeout(() => {
-    enemy1.diy();//заебенил пока в класс функцию удаления танка(надо будет как-то прервать функцию интерваллс для данного танка после того как танк исчезнет для данного танка ибо там сеттаймаут накидывает по 60 ошибок в секунду
+    enemy1.die();//заебенил пока в класс функцию удаления танка(надо будет как-то прервать функцию интерваллс для данного танка после того как танк исчезнет для данного танка ибо там сеттаймаут накидывает по 60 ошибок в секунду
   }, 2000);
 }
