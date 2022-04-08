@@ -7,7 +7,6 @@ const footer = document.querySelector(".footer");
 const leftpanel = document.querySelector(".leftPanel");
 
 let k = 0;
-let direction;
 const fps = 1000 / 60;
 
 
@@ -39,8 +38,7 @@ function controllers() {
       case "KeyW": //top
         player.run = true;
         player.el.style.backgroundImage = player.top;
-        player.side = 1;
-        direction = "top";
+        player.side = 'top';
         player.height = height;
         player.width = width;
         player.el.style.height = `${player.height}px`;
@@ -49,8 +47,7 @@ function controllers() {
       case "KeyD": //right
         player.run = true;
         player.el.style.backgroundImage = player.rigth;
-        player.side = 2;
-        direction = "right";
+        player.side = 'right';
         player.height = width;
         player.width = height;
         player.el.style.width = `${player.width}px`;
@@ -59,8 +56,7 @@ function controllers() {
       case "KeyS": //bottom
         player.run = true;
         player.el.style.backgroundImage = player.bottom;
-        player.side = 3;
-        direction = "bottom";
+        player.side = 'bottom';
         player.height = height;
         player.width = width;
         player.el.style.height = `${player.height}px`;
@@ -69,27 +65,26 @@ function controllers() {
       case "KeyA": //left
         player.run = true;
         player.el.style.backgroundImage = player.left;
-        player.side = 4;
-        direction = "left";
+        player.side = 'left';
         player.height = width;
         player.width = height;
         player.el.style.width = `${player.width}px`;
         player.el.style.height = `${player.height}px`;
         break;
       case "ShiftLeft":
-        if (player.side === 1) {
+        if (player.side === 'top') {
           addbullet(
             player.width / 2 - player.bulletsize / 2,
             -player.bulletsize
           );
-        } else if (player.side === 2) {
+        } else if (player.side === 'right') {
           addbullet(player.width, player.height / 2 - player.bulletsize / 2);
-        } else if (player.side === 3) {
+        } else if (player.side === 'bottom') {
           addbullet(
             player.width / 2 - player.bulletsize / 2,
             player.height + player.bulletsize / 2
           );
-        } else if (player.side === 4) {
+        } else if (player.side === 'left') {
           addbullet(
             -player.bulletsize,
             player.height / 2 - player.bulletsize / 2
@@ -125,14 +120,14 @@ setInterval(() => {
 function run(){
   if (player.run) {
     switch (player.side) {
-      case 1: //top
+      case 'top': 
         if (player.y > 0) {
           player.y -= player.speed;
           player.el.style.top = `${player.y}px`;
         }
 
         break;
-      case 2: //right
+      case 'right': 
         if (
           player.x <
           hangar.getBoundingClientRect().left -
@@ -144,7 +139,7 @@ function run(){
         }
 
         break;
-      case 3: //bottom
+      case 'bottom': 
         if (
           player.y <
           footer.getBoundingClientRect().top -
@@ -156,7 +151,7 @@ function run(){
         }
 
         break;
-      case 4: //left
+      case 'left': 
         if (player.x > 0) {
           player.x -= player.speed;
           player.el.style.left = `${player.x}px`;
@@ -234,7 +229,7 @@ function intervalls() {
 
 function addbullet(x, y) {
   if (player.fire === true) {
-    const BULLET_EL = `<div class="bullet" direction = ${direction} style = "left: ${
+    const BULLET_EL = `<div class="bullet" direction = ${player.side} style = "left: ${
       player.x + x
     }px; top: ${player.y + y}px; width:${player.bulletsize}px; height:${
       player.bulletsize
@@ -258,7 +253,7 @@ let player = {
   x: gamezone.getBoundingClientRect().width/2,
   y: gamezone.getBoundingClientRect().height/2,
   run: false,
-  side: 0, //1-top, 2-right, 3- bottom, 4-left  0 это положение в котором игра стоит
+  side: '', //1-top, 2-right, 3- bottom, 4-left  0 это положение в котором игра стоит
   fire: true,
   points: 0,
 };
