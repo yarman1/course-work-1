@@ -29,88 +29,41 @@ function init() {
   points.textContent = `${player.points}`;
   hp.textContent = `${player.hp}`;
 }
+function turn(side,width,height) {
+  player.run = true;
+  player.side = side;
+  player.el.style.backgroundImage = player[side];
+  player.height = height;
+  player.width = width;
+  player.el.style.height = `${player.height}px`;
+  player.el.style.width = `${player.width}px`;
+}
 function controllers() {
   let width = player.width;
   let height = player.height;
   document.addEventListener("keydown", (e) => {
-    console.log(e.code);
-    switch (e.code) {
-      case "KeyW": //top
-        player.run = true;
-        player.el.style.backgroundImage = player.top;
-        player.side = 'top';
-        player.height = height;
-        player.width = width;
-        player.el.style.height = `${player.height}px`;
-        player.el.style.width = `${player.width}px`;
-        break;
-      case "KeyD": //right
-        player.run = true;
-        player.el.style.backgroundImage = player.rigth;
-        player.side = 'right';
-        player.height = width;
-        player.width = height;
-        player.el.style.width = `${player.width}px`;
-        player.el.style.height = `${player.height}px`;
-        break;
-      case "KeyS": //bottom
-        player.run = true;
-        player.el.style.backgroundImage = player.bottom;
-        player.side = 'bottom';
-        player.height = height;
-        player.width = width;
-        player.el.style.height = `${player.height}px`;
-        player.el.style.width = `${player.width}px`;
-        break;
-      case "KeyA": //left
-        player.run = true;
-        player.el.style.backgroundImage = player.left;
-        player.side = 'left';
-        player.height = width;
-        player.width = height;
-        player.el.style.width = `${player.width}px`;
-        player.el.style.height = `${player.height}px`;
-        break;
-      case "ShiftLeft":
-        if (player.side === 'top') {
-          addbullet(
-            player.width / 2 - player.bulletsize / 2,
-            -player.bulletsize
-          );
-        } else if (player.side === 'right') {
-          addbullet(player.width, player.height / 2 - player.bulletsize / 2);
-        } else if (player.side === 'bottom') {
-          addbullet(
-            player.width / 2 - player.bulletsize / 2,
-            player.height + player.bulletsize / 2
-          );
-        } else if (player.side === 'left') {
-          addbullet(
-            -player.bulletsize,
-            player.height / 2 - player.bulletsize / 2
-          );
+    if (e.code === 'KeyW') {
+      turn('top', width, height);
+    } else if (e.code === 'KeyD') {
+      turn('right', height, width);
+    } else if (e.code === 'KeyS') {
+      turn('bottom', width, height);
+    } else if (e.code === 'KeyA') {
+      turn('left', height, width);
+    } else if (e.code === "ShiftLeft") {
+        if (player.side === 'top') { addbullet( player.width / 2 - player.bulletsize / 2,-player.bulletsize);
+        } else if (player.side === 'right') { addbullet(player.width, player.height / 2 - player.bulletsize / 2);
+        } else if (player.side === 'bottom') {addbullet(player.width / 2 - player.bulletsize / 2,player.height + player.bulletsize / 2);
+        } else if (player.side === 'left') {addbullet(-player.bulletsize,player.height / 2 - player.bulletsize / 2);
         }
-        break;
     }
   });
-
   document.addEventListener("keyup", (e) => {
-    switch (e.code) {
-      case "KeyW": //top
-        player.run = false;
-        break;
-      case "KeyD": //right
-        player.run = false;
-        break;
-      case "KeyS": //bottom
-        player.run = false;
-        break;
-      case "KeyA": //left
-        player.run = false;
-        break;
-    }
+    const codes = ['KeyW', 'KeyD', 'KeyS', 'KeyA']
+    if(codes.includes(e.code)) player.run = false;
   });
 }
+
 function SetInt(func){
 setInterval(() => {
   func();
@@ -224,7 +177,6 @@ function intervalls() {
   ints.run = SetInt(run);
   ints.bullet = SetInt(playerbullets);
   ints.enemmove = SetInt(moveenemies);
-
 }
 
 function addbullet(x, y) {
@@ -265,7 +217,7 @@ class BigTank{
     this.damage = collection.get('damage');
     this.top = `url(sprites/${collection.get('image')}-top.png)`;
     this.left = `url(sprites/${collection.get('image')}-left.png)`;
-    this.rigth = `url(sprites/${collection.get('image')}-right.png)`;
+    this.right = `url(sprites/${collection.get('image')}-right.png)`;
     this.bottom = `url(sprites/${collection.get('image')}-bottom.png)`;
     this.width = collection.get('width');
     this.height = collection.get('height');
@@ -313,7 +265,7 @@ class enemy extends SmallTank {
    if(this.side === 1){
      this.el.style.backgroundImage = this.top;
    }else if(this.side === 2){
-    this.el.style.backgroundImage = this.rigth;
+    this.el.style.backgroundImage = this.right;
    }else if(this.side === 3){
     this.el.style.backgroundImage = this.bottom;
    }else if(this.side === 4){
@@ -350,7 +302,7 @@ class enemy extends SmallTank {
         if(Math.abs(this.y+this.height/2-player.y - player.height/2)<this.height/4){
           if(this.x+ this.width< player.x){
             this.side = 2;
-            this.el.style.backgroundImage = this.rigth;
+            this.el.style.backgroundImage = this.right;
           }else if(this.x >player.x+player.width){
             this.side = 4;
             this.el.style.backgroundImage = this.left;
@@ -365,7 +317,7 @@ class enemy extends SmallTank {
         }
       }else{
         this.side = 2;
-        this.el.style.backgroundImage = this.rigth;
+        this.el.style.backgroundImage = this.right;
         return 0;
       }
 
@@ -398,7 +350,7 @@ class enemy extends SmallTank {
         if(Math.abs(this.y+this.height/2-player.y - player.height/2)<this.height/4){
           if(this.x+ this.width< player.x){
             this.side = 2;
-            this.el.style.backgroundImage = this.rigth;
+            this.el.style.backgroundImage = this.right;
           }else if(this.x >player.x+player.width){
             this.side = 4;
             this.el.style.backgroundImage = this.left;
@@ -585,7 +537,6 @@ const ENEMY4_INFO_ARRAY = [
   ['side',1]
 ];
 let ENEMY4_INFO = new Map(ENEMY4_INFO_ARRAY);
-
 
 
 let enemy1 = new enemy(ENEMY1_INFO);
