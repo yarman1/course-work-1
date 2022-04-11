@@ -29,28 +29,24 @@ function init() {
   points.textContent = `${player.points}`;
   hp.textContent = `${player.hp}`;
 }
-function turn(side,width,height) {
-  player.run = true;
-  player.side = side;
-  player.el.style.backgroundImage = player[side];
-  player.height = height;
-  player.width = width;
-  player.el.style.height = `${player.height}px`;
-  player.el.style.width = `${player.width}px`;
+function turn(tank,side,width,height) {
+  tank.run = true;
+  tank.side = side;
+  tank.el.style.backgroundImage = tank[side];
+  tank.height = height;
+  tank.width = width;
+  tank.el.style.height = `${tank.height}px`;
+  tank.el.style.width = `${tank.width}px`;
 }
 function controllers() {
   let width = player.width;
   let height = player.height;
   document.addEventListener("keydown", (e) => {
-    if (e.code === 'KeyW') {
-      turn('top', width, height);
-    } else if (e.code === 'KeyD') {
-      turn('right', height, width);
-    } else if (e.code === 'KeyS') {
-      turn('bottom', width, height);
-    } else if (e.code === 'KeyA') {
-      turn('left', height, width);
-    } else if (e.code === "ShiftLeft") {
+    if (e.code === 'KeyW') turn(player,'top', width, height);
+     else if (e.code === 'KeyD') turn(player,'right', height, width);
+     else if (e.code === 'KeyS') turn(player,'bottom', width, height);
+     else if (e.code === 'KeyA') turn(player,'left', height, width);
+     else if (e.code === "ShiftLeft") {
         if (player.side === 'top') { addbullet( player.width / 2 - player.bulletsize / 2,-player.bulletsize);
         } else if (player.side === 'right') { addbullet(player.width, player.height / 2 - player.bulletsize / 2);
         } else if (player.side === 'bottom') {addbullet(player.width / 2 - player.bulletsize / 2,player.height + player.bulletsize / 2);
@@ -147,6 +143,12 @@ let player = {
   fire: true,
   points: 0,
 };
+function collision(player,enemy){
+  const playerHealth = player.hp;
+  player.hp -=enemy.hp;
+  enemy.hp-=playerHealth;
+  ShowPoints();
+}
 
 class BigTank{
   constructor(collection = new Map()){
@@ -225,112 +227,52 @@ class enemy extends SmallTank {
     if(this.side === 'top'){
       if(this.y>0){
         if(Math.abs(this.y+this.height/2-player.y - player.height/2)<this.height/4){
-          if(this.x+ this.width< player.x){
-            this.side = 'right';
-            this.el.style.backgroundImage = this.right;
-          }else if(this.x >player.x+player.width){
-            this.side = 'left';
-            this.el.style.backgroundImage = this.left;
-          }else{
-            const playerHealth = player.hp;
-            player.hp -=this.hp;
-            this.hp-=playerHealth;
-            ShowPoints();
-          }
+          if(this.x+ this.width< player.x){turn(this,'right', this.height, this.width);
+          }else if(this.x >player.x+player.width){turn(this,'left', this.height, this.width);
+          }else{collision(player,this);}
         }else{
           this.y -= this.speed;
           this.el.style.top = `${this.y}px`;
         }
-      }else{
-        this.side = 'right';
-        this.el.style.backgroundImage = this.right;
-        return 0;
-      }
-
+      }else{turn(this,'right', this.height, this.width);
+        return 0;}
     }else if(this.side === 'right'){
       if(this.x < gamezone.getBoundingClientRect().width - this.width){
         if(Math.abs(this.x+this.width/2-player.x-player.width/2)<this.height/4){
-          if(this.y>player.y+player.height){
-            this.side = 'top';
-            this.el.style.backgroundImage = this.top;
-          }else if(this.y+this.height<player.y){
-            this.side = 'bottom';
-            this.el.style.backgroundImage = this.bottom;
-          }else{
-            const playerHealth = player.hp;
-            player.hp -=this.hp;
-            this.hp-=playerHealth;
-            ShowPoints();
-          }
+          if(this.y>player.y+player.height){turn(this,'top', this.width, this.height);
+          }else if(this.y+this.height<player.y){turn(this,'bottom', this.width, this.height);
+          }else{collision(player,this);}
         }else{
           this.x += this.speed;
-          this.el.style.left = `${this.x}px`;
-        }
-      }else{
-        this.side = 'bottom';
-        this.el.style.backgroundImage = this.bottom;
-        return 0;
-      }
-
+          this.el.style.left = `${this.x}px`;}
+      }else{turn(this,'bottom', this.width, this.height);
+        return 0;}
     }else if(this.side === 'bottom'){
       if(this.y < gamezone.getBoundingClientRect().height- this.height){
         if(Math.abs(this.y+this.height/2-player.y - player.height/2)<this.height/4){
-          if(this.x+ this.width< player.x){
-            this.side = 'right';
-            this.el.style.backgroundImage = this.right;
-          }else if(this.x >player.x+player.width){
-            this.side = 'left';
-            this.el.style.backgroundImage = this.left;
-          }else{
-            const playerHealth = player.hp;
-            player.hp -=this.hp;
-            this.hp-=playerHealth;
-            ShowPoints();
-          }
-        }
-       else{
+          if(this.x+ this.width< player.x){ turn(this,'right', this.height, this.width);
+          }else if(this.x >player.x+player.width){turn(this,'left', this.height, this.width);
+          }else{collision(player,this);}
+        } else{
         this.y += this.speed;
         this.el.style.top = `${this.y}px`;
-       }
-      }else{
-        this.side = 'left';
-        this.el.style.backgroundImage = this.left;
-        return 0;
-      }
-
-
+       }}else{turn(this,'left', this.height, this.width);
+        return 0;}
     }else if(this.side === 'left'){
       if(this.x > 0){
         if(Math.abs(this.x+this.width/2-player.x-player.width/2)<this.height/4){
-          if(this.y>player.y+player.height){
-            this.side = 'top';
-            this.el.style.backgroundImage = this.top;
-          }else if(this.y+this.height<player.y){
-            this.side = 'bottom';
-            this.el.style.backgroundImage = this.bottom;
-          }else{
-            const playerHealth = player.hp;
-            player.hp -=this.hp;
-            this.hp-=playerHealth;
-            ShowPoints();
-          }
-        }
+          if(this.y>player.y+player.height){turn(this,'top', this.width, this.height);
+          }else if(this.y+this.height<player.y){turn(this,'bottom', this.width, this.height);
+          }else{collision(player,this);}}
         else{
           this.x -= this.speed;
           this.el.style.left = `${this.x}px`;
-        }
-
-      }else{
-        this.side = 'top';
-        this.el.style.backgroundImage = this.top;
+        } }else{turn(this,'top', this.width, this.height);
         return 0;
       }
-
     }
   }
 }
-
-
 const M4_INFO_ARRAY = [
   ['speed', 10],
   ['hp', 1000],
