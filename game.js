@@ -47,10 +47,10 @@ function controllers() {
      else if (e.code === 'KeyS') turn(player,'bottom', width, height);
      else if (e.code === 'KeyA') turn(player,'left', height, width);
      else if (e.code === "ShiftLeft") {
-        if (player.side === 'top') { addbullet( player.width / 2 - player.bulletsize / 2,-player.bulletsize);
-        } else if (player.side === 'right') { addbullet(player.width, player.height / 2 - player.bulletsize / 2);
-        } else if (player.side === 'bottom') {addbullet(player.width / 2 - player.bulletsize / 2,player.height + player.bulletsize / 2);
-        } else if (player.side === 'left') {addbullet(-player.bulletsize,player.height / 2 - player.bulletsize / 2);
+        if (player.side === 'top') { addbullet(player, player.width / 2 - player.bulletsize / 2,-player.bulletsize);
+        } else if (player.side === 'right') { addbullet(player,player.width, player.height / 2 - player.bulletsize / 2);
+        } else if (player.side === 'bottom') {addbullet(player,player.width / 2 - player.bulletsize / 2,player.height + player.bulletsize / 2);
+        } else if (player.side === 'left') {addbullet(player,-player.bulletsize,player.height / 2 - player.bulletsize / 2);
         }
     }
   });
@@ -77,7 +77,7 @@ function run(){
   }
 }
 
-function moveBullLeftTop(direction,bullet){
+function moveBullLeftTop(direction, bullet) {
 (bullet.getBoundingClientRect()[direction]>gamezone.getBoundingClientRect()[direction]+player.bulletsize)?
 bullet.style[direction] =`${parseInt(bullet.style[direction].replace("px", ""), 10) -player.bulletspeed}px`:
 bullet.parentNode.removeChild(bullet);
@@ -113,16 +113,18 @@ function intervalls() {
   ints.enemmove = SetInt(moveenemies);
 }
 
-function addbullet(x, y) {
+
+function addbullet(tank, x, y) {
+  
   if (player.fire === true) {
-    const BULLET_EL = `<div class="bullet" direction = ${player.side} style = "left: ${
-      player.x + x
-    }px; top: ${player.y + y}px; width:${player.bulletsize}px; height:${
-      player.bulletsize
+    const BULLET_EL = `<div class="bullet" direction = ${tank.side} style = "left: ${
+      tank.x + x
+    }px; top: ${tank.y + y}px; width:${tank.bulletsize}px; height:${
+      tank.bulletsize
     }px"></div>`;
     gamezone.insertAdjacentHTML("beforeend", BULLET_EL);
-    player.fire = false;
-    setTimeout(() => (player.fire = true), player.bullettime);
+    tank.fire = false;
+    setTimeout(() => (tank.fire = true), tank.bullettime);
   }
 }
 
@@ -156,20 +158,15 @@ function TurnOnCollision(element, side1,side2,condition1,condition2){
 
 
 class BigTank{
-  constructor(collection = new Map()){
-    this.speed = collection.get('speed');
-    this.hp = collection.get('hp');
-    this.damage = collection.get('damage');
-    this.top = `url(sprites/${collection.get('image')}-top.png)`;
-    this.left = `url(sprites/${collection.get('image')}-left.png)`;
-    this.right = `url(sprites/${collection.get('image')}-right.png)`;
-    this.bottom = `url(sprites/${collection.get('image')}-bottom.png)`;
-    this.width = collection.get('width');
-    this.height = collection.get('height');
-    this.bulletspeed = collection.get('bulletspeed');
-    this.bullettime = collection.get('bullettime');
-    this.bulletsize = collection.get('bulletsize');
-    this.bulletsize = collection.get('bulletsize');
+  constructor(collection = new Map()) {
+    const KEYS = collection.keys();
+    const SIDE_ARRAY = ['top', 'left', 'bottom', 'right'];
+    for (const key of KEYS) {
+       this[key] = collection.get(key); 
+    }
+    for (const key of SIDE_ARRAY) {
+      this[key] = `url(sprites/${collection.get('image')}-${key}.png)`;
+   }
   }
   active() {
     if (k === 0) {
@@ -425,7 +422,7 @@ function moveenemies(){
     enemy.move();
   }
  /* setTimeout(() => {
-    enemy1.die();//заебенил пока в класс функцию удаления танка(надо будет как-то прервать функцию интерваллс для данного танка после того как танк исчезнет для данного танка ибо там сеттаймаут накидывает по 60 ошибок в секунду
+    enemy1.die();
   }, 2000);*/
 }
 
