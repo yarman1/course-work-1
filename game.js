@@ -115,11 +115,27 @@ function intervalls() {
 
 
 function addbullet(tank, x, y) {
-  
-  if (player.fire === true) {
-    const BULLET_EL = `<div class="bullet" direction = ${tank.side} style = "left: ${
-      tank.x + x
-    }px; top: ${tank.y + y}px; width:${tank.bulletsize}px; height:${
+  let dynamic = 0;
+  let static = 0;
+  let staticAxis = ' ';
+  const direction = tank.side;
+  const coordsClasses = {
+    horizontal: ['left', 'right'],
+    vertical: ['top', 'bottom'],
+  }; 
+  if(coordsClasses.horizontal.includes(direction)){
+    dynamic = tank.x + x;
+    static = tank.y + y;
+    staticAxis = coordsClasses.horizontal.shift();
+  } else {
+    dynamic = tank.y + y;
+    static = tank.x + x;
+    staticAxis = coordsClasses.vertical.shift();
+  }
+  if (tank.fire === true) {
+    let BULLET_EL = `<div class="bullet" direction = ${direction} style = "${direction}: ${
+      dynamic
+    }px; ${staticAxis}: ${static}px; width:${tank.bulletsize}px; height:${
       tank.bulletsize
     }px"></div>`;
     gamezone.insertAdjacentHTML("beforeend", BULLET_EL);
