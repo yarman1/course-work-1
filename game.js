@@ -42,15 +42,17 @@ function controllers() {
   let width = player.width;
   let height = player.height;
   document.addEventListener("keydown", (e) => {
+    let widthZone = gamezone.getBoundingClientRect().width;
+    let heightZone = gamezone.getBoundingClientRect().height;
     if (e.code === 'KeyW') turn(player,'top', width, height);
      else if (e.code === 'KeyD') turn(player,'right', height, width);
      else if (e.code === 'KeyS') turn(player,'bottom', width, height);
      else if (e.code === 'KeyA') turn(player,'left', height, width);
      else if (e.code === "ShiftLeft") {
-        if (player.side === 'top') { addbullet(player, player.width / 2 - player.bulletsize / 2,-player.bulletsize);
-        } else if (player.side === 'right') { addbullet(player,player.width, player.height / 2 - player.bulletsize / 2);
-        } else if (player.side === 'bottom') {addbullet(player,player.width / 2 - player.bulletsize / 2,player.height + player.bulletsize / 2);
-        } else if (player.side === 'left') {addbullet(player,-player.bulletsize,player.height / 2 - player.bulletsize / 2);
+        if (player.side === 'top') { addbullet(player, player.x+player.width / 2 - player.bulletsize / 2,player.y-player.bulletsize);
+        } else if (player.side === 'right') { addbullet(player, widthZone-player.x-player.width,player.y+ player.height / 2 - player.bulletsize / 2);
+        } else if (player.side === 'bottom') {addbullet(player,player.x+player.width / 2 - player.bulletsize / 2,heightZone- player.y - player.height - player.bulletsize / 2);
+        } else if (player.side === 'left') {addbullet(player,player.x-player.bulletsize,player.y + player.height / 2 - player.bulletsize / 2);
         }
     }
   });
@@ -77,8 +79,8 @@ function run(){
   }
 }
 
-function moveBullLeftTop(direction, bullet) {
-(bullet.getBoundingClientRect()[direction]>gamezone.getBoundingClientRect()[direction]+player.bulletsize)?
+function moveBull(direction, bullet, sign) {
+(sign*bullet.getBoundingClientRect()[direction]>sign*(gamezone.getBoundingClientRect()[direction]+player.bulletsize))?
 bullet.style[direction] =`${parseInt(bullet.style[direction].replace("px", ""), 10) -player.bulletspeed}px`:
 bullet.parentNode.removeChild(bullet);
 }
@@ -87,19 +89,7 @@ function playerbullets(){
   let bullets = document.querySelectorAll(".bullet");
   bullets.forEach((bullet) => {
     let direction = bullet.getAttribute("direction");
-    (direction === 'top' || direction === 'left') ? moveBullLeftTop(direction,bullet):null;
-
-   if (direction === "bottom") {
-      if ( bullet.getBoundingClientRect().bottom < gamezone.getBoundingClientRect().bottom - player.bulletsize) {
-        bullet.style.top = `${parseInt(bullet.style.top.replace("px", ""), 10) +player.bulletspeed }px`;
-      } else { bullet.parentNode.removeChild(bullet); }
-    } 
-
-    else if (direction === "right") {
-      if ( bullet.getBoundingClientRect().right <= gamezone.getBoundingClientRect().right - player.bulletsize) {
-        bullet.style.left = `${ parseInt(bullet.style.left.replace("px", ""), 10) + player.bulletspeed}px`;
-      } else {bullet.parentNode.removeChild(bullet);}
-    }
+    (direction === 'top' || direction === 'left') ? moveBull(direction,bullet, 1):moveBull(direction,bullet, -1);
   });
 }
 
@@ -115,29 +105,14 @@ function intervalls() {
 
 
 function addbullet(tank, x, y) {
-  let dynamic = 0;
-  let static = 0;
-  let staticAxis = ' ';
   const direction = tank.side;
-  const coordsClasses = {
-    horizontal: ['left', 'right'],
-    vertical: ['top', 'bottom'],
-  }; 
-  if(coordsClasses.horizontal.includes(direction)){
-    dynamic = tank.x + x;
-    static = tank.y + y;
-    staticAxis = coordsClasses.horizontal.shift();
-  } else {
-    dynamic = tank.y + y;
-    static = tank.x + x;
-    staticAxis = coordsClasses.vertical.shift();
-  }
+  let horisontal = 'left';
+  let vertical = 'top';
+  direction === 'right' ? horisontal = 'right' : horisontal = 'left';
+  direction === 'bottom'? vertical = 'bottom':vertical = 'top';
   if (tank.fire === true) {
-    let BULLET_EL = `<div class="bullet" direction = ${direction} style = "${direction}: ${
-      dynamic
-    }px; ${staticAxis}: ${static}px; width:${tank.bulletsize}px; height:${
-      tank.bulletsize
-    }px"></div>`;
+    let BULLET_EL = `<div class="bullet" direction = ${direction} style = "${horisontal}: ${x}px;
+     ${vertical}: ${y}px; width:${tank.bulletsize}px; height:${tank.bulletsize}px"></div>`;
     gamezone.insertAdjacentHTML("beforeend", BULLET_EL);
     tank.fire = false;
     setTimeout(() => (tank.fire = true), tank.bullettime);
@@ -171,7 +146,6 @@ function collision(player,enemy){
 function TurnOnCollision(element, side1,side2,condition1,condition2){
   condition1? turn(element,side1,element.height, element.width):condition2?turn(element,side2,element.height, element.width):collision(player,element);
   }
-
 
 class BigTank{
   constructor(collection = new Map()) {
@@ -240,7 +214,6 @@ class enemy extends SmallTank {
     this.find();
     this.back();
   }
-
 
   move(){
     const DifferenceWith = Math.abs(this.x+this.width/2-player.x-player.width/2);
