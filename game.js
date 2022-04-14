@@ -42,27 +42,23 @@ function controllers() {
   let width = player.width;
   let height = player.height;
   document.addEventListener("keydown", (e) => {
-    let widthZone = gamezone.getBoundingClientRect().width;
-    let heightZone = gamezone.getBoundingClientRect().height;
     if (e.code === 'KeyW') turn(player,'top', width, height);
      else if (e.code === 'KeyD') turn(player,'right', height, width);
      else if (e.code === 'KeyS') turn(player,'bottom', width, height);
      else if (e.code === 'KeyA') turn(player,'left', height, width);
      else if (e.code === "ShiftLeft") {
-        if (player.side === 'top') { addbullet(player, player.x+player.width / 2 - player.bulletsize / 2,player.y-player.bulletsize);
-        } else if (player.side === 'right') { addbullet(player, widthZone-player.x-player.width,player.y+ player.height / 2 - player.bulletsize / 2);
-        } else if (player.side === 'bottom') {addbullet(player,player.x+player.width / 2 - player.bulletsize / 2,heightZone- player.y - player.height - player.bulletsize / 2);
-        } else if (player.side === 'left') {addbullet(player,player.x-player.bulletsize,player.y + player.height / 2 - player.bulletsize / 2);
-        }
+      player.fire = true;
+        Shooting(player);
     }
   });
   document.addEventListener("keyup", (e) => {
     const codes = ['KeyW', 'KeyD', 'KeyS', 'KeyA']
     if(codes.includes(e.code)) player.run = false;
+    else if(e.code === 'ShiftLeft') player.fire = false;
   });
 }
 
-function SetInt(func){
+function SetInt(func, fps){
 setInterval(() => {
   func();
 }, fps);
@@ -78,6 +74,27 @@ function run(){
     player.el.style.left = `${player.x}px`;
   }
 }
+
+function oneBullet(el){
+  let widthZone = gamezone.getBoundingClientRect().width;
+  let heightZone = gamezone.getBoundingClientRect().height;
+  if (el.side === 'top') { addbullet(el, el.x+el.width / 2 - el.bulletsize / 2,el.y-el.bulletsize);
+  } else if (el.side === 'right') { addbullet(el, widthZone-el.x-el.width,el.y+ el.height / 2 - el.bulletsize / 2);
+  } else if (el.side === 'bottom') {addbullet(el,el.x+el.width / 2 - el.bulletsize / 2,heightZone- el.y - el.height - el.bulletsize / 2);
+  } else if (el.side === 'left') {addbullet(el,el.x-el.bulletsize,el.y + el.height / 2 - el.bulletsize / 2);
+  }
+}
+
+function Shooting(el){
+    if(el.fire === true){
+    oneBullet(el);
+    setTimeout(() => {
+      if(el.fire === false) return; 
+      Shooting(el);
+    }, el.bullettime); 
+    }
+}
+
 
 function moveBull(direction, bullet, sign) {
 (sign*bullet.getBoundingClientRect()[direction]>sign*(gamezone.getBoundingClientRect()[direction]+player.bulletsize))?
@@ -98,9 +115,9 @@ function ShowPoints(){
   hp.textContent = `${player.hp}`;
 }
 function intervalls() {
-  ints.run = SetInt(run);
-  ints.bullet = SetInt(playerbullets);
-  ints.enemmove = SetInt(moveenemies);
+  ints.run = SetInt(run, fps);
+  ints.bullet = SetInt(playerbullets, fps);
+  ints.enemmove = SetInt(moveenemies, fps);
 }
 
 
