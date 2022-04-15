@@ -8,7 +8,7 @@ const leftpanel = document.querySelector(".leftPanel");
 
 let k = 0;
 const fps = 1000 / 60;
-
+let BulletsInt;
 
 let ints = {
   run: false,
@@ -54,7 +54,10 @@ function controllers() {
   document.addEventListener("keyup", (e) => {
     const codes = ['KeyW', 'KeyD', 'KeyS', 'KeyA']
     if(codes.includes(e.code)) player.run = false;
-    else if(e.code === 'ShiftLeft') player.fire = false;
+    else if(e.code === 'ShiftLeft'){
+      player.fire = false;
+      clearInterval(BulletsInt)
+    } 
   });
 }
 
@@ -86,14 +89,14 @@ function oneBullet(el){
 }
 
 function Shooting(el){
-    if(el.fire === true){
-    oneBullet(el);
-    setTimeout(() => {
-      if(el.fire === false) return; 
-      Shooting(el);
-    }, el.bullettime); 
-    }
+  oneBullet(el);
+     BulletsInt = setInterval(() => {
+      if(el.fire = true){
+        oneBullet(el);
+      };
+    }, el.bullettime);   
 }
+
 
 
 function moveBull(direction, bullet, sign) {
