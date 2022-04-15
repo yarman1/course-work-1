@@ -48,7 +48,10 @@ function controllers() {
      else if (e.code === 'KeyA') turn(player,'left', height, width);
      else if (e.code === "ShiftLeft") {
       player.fire = true;
-        Shooting(player);
+       if(!player.reload){
+        player.reload = true;
+        Shooting();
+       }
     }
   });
   document.addEventListener("keyup", (e) => {
@@ -56,7 +59,6 @@ function controllers() {
     if(codes.includes(e.code)) player.run = false;
     else if(e.code === 'ShiftLeft'){
       player.fire = false;
-      clearInterval(BulletsInt)
     } 
   });
 }
@@ -88,13 +90,16 @@ function oneBullet(el){
   }
 }
 
-function Shooting(el){
-  oneBullet(el);
-     BulletsInt = setInterval(() => {
-      if(el.fire = true){
-        oneBullet(el);
-      };
-    }, el.bullettime);   
+function Shooting(){
+  oneBullet(player);
+     let bulletsInt = setInterval(() => {
+      if(player.fire == true){
+        oneBullet(player);
+      } else {
+        player.reload = false;
+        clearInterval(bulletsInt);
+      }
+    }, player.bullettime);   
 }
 
 
@@ -134,8 +139,6 @@ function addbullet(tank, x, y) {
     let BULLET_EL = `<div class="bullet" direction = ${direction} style = "${horisontal}: ${x}px;
      ${vertical}: ${y}px; width:${tank.bulletsize}px; height:${tank.bulletsize}px"></div>`;
     gamezone.insertAdjacentHTML("beforeend", BULLET_EL);
-    tank.fire = false;
-    setTimeout(() => (tank.fire = true), tank.bullettime);
   }
 }
 
@@ -154,6 +157,7 @@ let player = {
   run: false,
   side: '', //1-top, 2-right, 3- bottom, 4-left  0 это положение в котором игра стоит
   fire: true,
+  reload: false,
   points: 0,
 };
 function collision(player,enemy){
@@ -165,7 +169,8 @@ function collision(player,enemy){
     
 function TurnOnCollision(element, side1,side2,condition1,condition2){
   condition1? turn(element,side1,element.height, element.width):condition2?turn(element,side2,element.height, element.width):collision(player,element);
-  }
+ element.shoot();
+}
 
 class BigTank{
   constructor(collection = new Map()) {
@@ -274,6 +279,9 @@ class enemy extends SmallTank {
           this.el.style.left = `${this.x}px`;
         } }else{turn(this,'top', this.width, this.height);
         return 0; }}
+  }
+  shoot(){
+    oneBullet(this);
   }
 }
 const M4_INFO_ARRAY = [
@@ -430,8 +438,15 @@ function moveenemies(){
   for(const enemy of enemies){
     enemy.move();
   }
+
+
  /* setTimeout(() => {
     enemy1.die();
   }, 2000);*/
 }
 
+function enemshoot(){
+  for(const enemy of enemies){
+    oneBullet(enemy);
+}
+}
