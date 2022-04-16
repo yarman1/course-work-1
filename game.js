@@ -104,17 +104,22 @@ function Shooting(){
 
 
 
-function moveBull(direction, bullet, sign) {
-(sign*bullet.getBoundingClientRect()[direction]>sign*(gamezone.getBoundingClientRect()[direction]+player.bulletsize))?
-bullet.style[direction] =`${parseInt(bullet.style[direction].replace("px", ""), 10) -player.bulletspeed}px`:
+function moveBull(tank, direction, bullet, sign) {
+(sign*bullet.getBoundingClientRect()[direction]>sign*(gamezone.getBoundingClientRect()[direction]+tank.bulletsize))?
+bullet.style[direction] =`${parseInt(bullet.style[direction].replace("px", ""), 10) -tank.bulletspeed}px`:
 bullet.parentNode.removeChild(bullet);
 }
 
 function playerbullets(){
   let bullets = document.querySelectorAll(".bullet");
   bullets.forEach((bullet) => {
+    const identity = bullet.getAttribute("identity");
+    let tank = identity == 'player' ? 
+      player :
+      enemies[parseInt(identity.slice(-1), 10) - 1];
+    console.log(tank);
     let direction = bullet.getAttribute("direction");
-    (direction === 'top' || direction === 'left') ? moveBull(direction,bullet, 1):moveBull(direction,bullet, -1);
+    (direction === 'top' || direction === 'left') ? moveBull(tank, direction,bullet, 1):moveBull(tank, direction,bullet, -1);
   });
 }
 
@@ -126,20 +131,21 @@ function intervalls() {
   ints.run = SetInt(run, fps);
   ints.bullet = SetInt(playerbullets, fps);
   ints.enemmove = SetInt(moveenemies, fps);
+  ints.enemshoot = SetInt(shootEnemies, fps);
 }
 
 
 function addbullet(tank, x, y) {
   const direction = tank.side;
+  const identity = tank.name ? tank.name : 'player';
   let horisontal = 'left';
   let vertical = 'top';
   direction === 'right' ? horisontal = 'right' : horisontal = 'left';
   direction === 'bottom'? vertical = 'bottom':vertical = 'top';
-  if (tank.fire === true) {
-    let BULLET_EL = `<div class="bullet" direction = ${direction} style = "${horisontal}: ${x}px;
-     ${vertical}: ${y}px; width:${tank.bulletsize}px; height:${tank.bulletsize}px"></div>`;
+  let BULLET_EL = `<div class="bullet" direction = ${direction} identity = ${identity}
+    style = "${horisontal}: ${x}px; ${vertical}: ${y}px; 
+    width:${tank.bulletsize}px; height:${tank.bulletsize}px"></div>`;
     gamezone.insertAdjacentHTML("beforeend", BULLET_EL);
-  }
 }
 
 function game() {
@@ -169,7 +175,6 @@ function collision(player,enemy){
     
 function TurnOnCollision(element, side1,side2,condition1,condition2){
   condition1? turn(element,side1,element.height, element.width):condition2?turn(element,side2,element.height, element.width):collision(player,element);
- element.shoot();
 }
 
 class BigTank{
@@ -211,6 +216,7 @@ class enemy extends SmallTank {
     this.x = collection.get('x');
     this.y = collection.get('y');
     this.side = collection.get('side');
+    this.reload = false;
   }
 
   find(){
@@ -281,7 +287,13 @@ class enemy extends SmallTank {
         return 0; }}
   }
   shoot(){
-    oneBullet(this);
+    if(!this.reload){
+      this.reload = true;
+      setTimeout(() => {
+        oneBullet(this);
+        this.reload = false;
+    }, this.bullettime + Math.floor(Math.random() * 5000)); 
+    }
   }
 }
 const M4_INFO_ARRAY = [
@@ -438,15 +450,15 @@ function moveenemies(){
   for(const enemy of enemies){
     enemy.move();
   }
+}
 
+function shootEnemies(){
+  for(const enemy of enemies){
+    enemy.shoot();
+  }
+}
 
  /* setTimeout(() => {
     enemy1.die();
   }, 2000);*/
-}
 
-function enemshoot(){
-  for(const enemy of enemies){
-    oneBullet(enemy);
-}
-}
